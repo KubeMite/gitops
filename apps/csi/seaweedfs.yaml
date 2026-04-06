@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seaweedfs
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://seaweedfs.github.io/seaweedfs/helm
+      chart: seaweedfs
+      targetRevision: 4.17.0
+      helm:
+        valueFiles:
+          - $gitops/apps/csi/seaweedfs.values.yaml
+    - repoURL: https://github.com/KubeMite/gitops.git
+      targetRevision: HEAD
+      ref: gitops
+  destination:
+    name: "https://kubernetes.default.svc"
+    namespace: csi

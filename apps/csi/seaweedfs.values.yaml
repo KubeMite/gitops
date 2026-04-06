@@ -1,0 +1,247 @@
+# TODO: Add external secrets
+global:
+  securityConfig:
+    jwtSigning:
+      volumeWrite: true
+      volumeRead: true
+      filerWrite: true
+      filerRead: true
+  monitoring:
+    enabled: true
+  # if enabled will use global.replicationPlacement and override master & filer defaultReplicaPlacement config
+  enableReplication: true
+  #  replication type is XYZ:
+  # X number of replica in other data centers
+  # Y number of replica in other racks in the same data center
+  # Z number of replica in other servers in the same rack
+  replicationPlacement: 002
+
+master:
+  replicas: 3
+  volumePreallocate: true
+  #  replication type is XYZ:
+  # X number of replica in other data centers
+  # Y number of replica in other racks in the same data center
+  # Z number of replica in other servers in the same rack
+  defaultReplication: 002
+
+  # Disable http request, only gRpc operations are allowed
+  disableHttp: true
+
+  # Resume previous state on start master server
+  resumeState: true
+  # Use Hashicorp Raft
+  raftHashicorp: true
+  # Whether to bootstrap the Raft cluster. Only use it when use Hashicorp Raft
+  raftBootstrap: true
+
+  data:
+    type: persistentVolumeClaim
+    size: 5Gi
+    storageClass: local-path
+
+  logs:
+    type: persistentVolumeClaim
+    size: 200Mi
+    storageClass: local-path
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 100Mi
+
+  # updatePartition is used to control a careful rolling update of SeaweedFS
+  # masters.
+  updatePartition: 1
+
+  # used to assign priority to master pods
+  # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+  priorityClassName: system-node-critical
+
+  # Configure security context for Pod
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Configure security context for Container
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+
+volume:
+  replicas: 3
+  # Choose [memory|leveldb|leveldbMedium|leveldbLarge] mode for memory~performance balance., default memory
+  index: leveldb
+
+  # Custom command line arguments to add to the volume command
+  extraArgs: ["-metricsIp", "0.0.0.0"]
+
+  dataDirs:
+    - name: data
+      type: persistentVolumeClaim
+      size: 20Gi
+      storageClass: local-path
+      maxVolumes: 10000
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 500Mi
+
+  # used to assign priority to server pods
+  # ref: https://kubernetes.io/docs/concepts/configuration/pod-priority-preemption/
+  priorityClassName: system-node-critical
+
+  # Configure security context for Pod
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Configure security context for Container
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+
+filer:
+  replicas: 3
+  #  replication type is XYZ:
+  # X number of replica in other data centers
+  # Y number of replica in other racks in the same data center
+  # Z number of replica in other servers in the same rack
+  defaultReplicaPlacement: 002
+
+  # Whether proxy or redirect to volume server during file GET request
+  redirectOnRead: false
+
+  # Disable http request, only gRpc operations are allowed
+  disableHttp: true
+
+  # Custom command line arguments to add to the filer command
+  extraArgs: ["-metricsIp", "0.0.0.0"]
+
+  data:
+    type: persistentVolumeClaim
+    size: 5Gi
+    storageClass: local-path
+
+  logs:
+    type: persistentVolumeClaim
+    size: 200Mi
+    storageClass: local-path
+
+  # updatePartition is used to control a careful rolling update of SeaweedFS
+  # masters.
+  updatePartition: 1
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 500Mi
+
+  # used to assign priority to server pods
+  priorityClassName: system-node-critical
+
+  # Configure security context for Pod
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Configure security context for Container
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+
+  s3:
+    enabled: false
+
+s3:
+  enabled: true
+  replicas: 3
+
+  enableAuth: true
+  existingConfigSecret: s3-credentials
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 500Mi
+
+  # used to assign priority to server pods
+  priorityClassName: system-node-critical
+
+  # Configure security context for Pod
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+
+  # Configure security context for Container
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false
+
+  logs:
+    type: persistentVolumeClaim
+    size: 200Mi
+    storageClass: local-path
+
+admin:
+  enabled: true
+  replicas: 1
+
+  # Admin authentication
+  secret:
+    # Name of an existing secret containing admin credentials. If set, adminUser and adminPassword below are ignored.
+    existingSecret: admin-ui-credentials
+    # Key in the existing secret for the admin username. Required if existingSecret is set.
+    userKey: username
+    # Key in the existing secret for the admin password. Required if existingSecret is set.
+    pwKey: password
+
+  # Storage configuration
+  data:
+    type: persistentVolumeClaim
+    size: 200Mi
+    storageClass: local-path
+
+  logs:
+    type: persistentVolumeClaim
+    size: 200Mi
+    storageClass: local-path
+
+  resources:
+    requests:
+      cpu: 50m
+      memory: 50Mi
+    limits:
+      memory: 100Mi
+  # Configure security context for Pod
+  podSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    runAsGroup: 1000
+    fsGroup: 1000
+  # Configure security context for Container
+  containerSecurityContext:
+    enabled: true
+    runAsUser: 1000
+    allowPrivilegeEscalation: false

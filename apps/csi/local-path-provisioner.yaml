@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: local-path-provisioner
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: ghcr.io/rancher/local-path-provisioner/charts/local-path-provisioner
+      chart: local-path-provisioner
+      targetRevision: 0.0.35
+      helm:
+        valueFiles:
+          - $gitops/apps/csi/local-path-provisioner.values.yaml
+    - repoURL: https://github.com/KubeMite/gitops.git
+      targetRevision: HEAD
+      ref: gitops
+  destination:
+    name: "https://kubernetes.default.svc"
+    namespace: csi

@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: seaweedfs-csi-driver
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: https://seaweedfs.github.io/seaweedfs-csi-driver/helm
+      chart: seaweedfs-csi-driver
+      targetRevision: 0.2.11
+      helm:
+        valueFiles:
+          - $gitops/apps/csi/seaweedfs-csi-driver.values.yaml
+    - repoURL: https://github.com/KubeMite/gitops.git
+      targetRevision: HEAD
+      ref: gitops
+  destination:
+    name: "https://kubernetes.default.svc"
+    namespace: csi
