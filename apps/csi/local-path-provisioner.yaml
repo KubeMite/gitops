@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: ghcr.io/rancher/local-path-provisioner/charts/local-path-provisioner
+    - repoURL: ghcr.io/rancher/local-path-provisioner/charts
       chart: local-path-provisioner
       targetRevision: 0.0.35
       helm:
