@@ -1,4 +1,3 @@
-# TODO: Add external secrets
 global:
   securityConfig:
     jwtSigning:
@@ -234,14 +233,21 @@ admin:
       memory: 50Mi
     limits:
       memory: 100Mi
+
   # Configure security context for Pod
   podSecurityContext:
     enabled: true
     runAsUser: 1000
     runAsGroup: 1000
     fsGroup: 1000
+
   # Configure security context for Container
   containerSecurityContext:
     enabled: true
     runAsUser: 1000
     allowPrivilegeEscalation: false
+
+  service:
+    type: LoadBalancer
+    annotations:
+      io.cilium/lb-ipam-ips: "172.16.3.210"
