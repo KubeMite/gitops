@@ -1,0 +1,24 @@
+# Default values for cloudflare-tunnel.
+
+# Cloudflare parameters.
+cloudflare:
+  # The name of the tunnel this instance will serve
+  tunnelName: yahav.me
+  # The ID of the above tunnel.
+  # If defined, no secret is created for the credentials, and instead, the secret referenced is used
+  secretName: cloudflare-connector-secret
+  # Define ingress rules for the tunnel. See
+  # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
+  ingress:
+    - hostname: https://yahav.me
+      service: http://wiki-wiki-helm:80
+
+replicaCount: 2
+
+resources:
+  limits:
+    cpu: 100m
+    memory: 128Mi
+  requests:
+    cpu: 10m
+    memory: 64Mi

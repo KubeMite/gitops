@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: wiki
+  namespace: argocd
+spec:
+  project: default
+  sources:
+    - repoURL: ghcr.io/kubemite
+      chart: wiki-helm
+      targetRevision: '*'
+      helm:
+        valueFiles:
+          - $gitops/apps/wiki/wiki.values.yaml
+    - repoURL: https://github.com/KubeMite/gitops.git
+      targetRevision: HEAD
+      ref: gitops
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: wiki
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
