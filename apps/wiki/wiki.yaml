@@ -6,7 +6,7 @@ metadata:
 spec:
   project: default
   sources:
-    - repoURL: ghcr.io/kubemite
+    - repoURL: https://kubemite.github.io/wiki-helm
       chart: wiki-helm
       targetRevision: '*'
       helm:
