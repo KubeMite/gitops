@@ -10,7 +10,7 @@ cloudflare:
   # Define ingress rules for the tunnel. See
   # https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/configuration/configuration-file/ingress
   ingress:
-    - hostname: https://yahav.me
+    - hostname: yahav.me
       service: http://wiki-wiki-helm
 
 replicaCount: 2
