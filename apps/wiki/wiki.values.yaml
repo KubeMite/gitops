@@ -54,5 +54,5 @@ networkPolicy:
   defaultDeny: true
   # -- Ingress deployment pod selector label
   # Only pods with this label (in the same namespace) will be able to access the wiki pods
-  cloudflarePodLabel: |
-    app.kubernetes.io/name=cloudflare-tunnel-remote
+  cloudflarePodLabel:
+    pod: cloudflared
