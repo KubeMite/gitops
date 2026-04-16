@@ -1,5 +1,7 @@
-# gitops
+# GitOps
 
-Gitops configuration for my cluster
+This repository houses the GitOps configuration for the Kubernetes cluster.
 
-ArgoCD first reads from `root-appset.yaml` file, then creates an application for each folder under `apps`
+## Application Synchronization
+
+ArgoCD is configured to use an ApplicationSet pattern. It first reads from the `root-appset.yaml` file, and then dynamically creates a distinct application for every folder nested under the `apps` directory. This ensures new workloads are automatically picked up and deployed to the cluster.
